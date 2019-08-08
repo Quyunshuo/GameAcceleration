@@ -59,15 +59,6 @@ public class MainActivity extends AppCompatActivity {
     //爆炸特效
     private ExplosionField mExplosionField;
 
-    //    private float startX;
-//    private float startY;
-//    private float endX;
-//    private float endY;
-//    private float endX1;
-//    private float endY1;
-//    private float widthScreen;
-//    private float heightScreen;
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -81,13 +72,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //初始化ButterKnife
+        ButterKnife.bind(this);
         initView();
         initData();
     }
 
     private void initView() {
-        mImage_fighter = findViewById(R.id.image_fighter);
-        mImage_flash = findViewById(R.id.image_flash);
         Glide.with(this)
                 .asGif()
                 .load(R.mipmap.rocket)
@@ -96,8 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initData() {
-        //初始化ButterKnife
-        ButterKnife.bind(this);
         //获取爆炸特效实例
         mExplosionField = ExplosionField.attach2Window(this);
     }
@@ -149,13 +138,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 爆炸特效
-     *
-     * @param view1
-     * @param view2
-     * @param view3
-     * @param view4
-     * @param view5
-     * @param view6
      */
     private void startExplosionField(View view1, View view2, View view3, View view4, View view5, View view6) {
         mExplosionField.explode(view2);
@@ -207,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     private void fighterEndAnimation() {
         mImage_flash.setVisibility(View.VISIBLE);
         ObjectAnimator fighterEndFlash = ObjectAnimator.ofFloat(mImage_flash, "translationY", 0, 3000);
-        fighterEndFlash.setDuration(1000);
+        fighterEndFlash.setDuration(1500);
         ObjectAnimator fighterEndFighter = ObjectAnimator.ofFloat(mImage_fighter, "translationY", -600, -2300);
         fighterEndFighter.setDuration(2000);
         fighterEndFighter.setInterpolator(new AccelerateInterpolator());
@@ -236,6 +218,4 @@ public class MainActivity extends AppCompatActivity {
         });
         endAnimationSet.start();
     }
-
-
 }

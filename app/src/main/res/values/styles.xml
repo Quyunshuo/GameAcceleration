@@ -7,10 +7,4 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    <declare-styleable name="RainView">
-        <attr name="RainView_drop_length" format="integer"></attr>
-        <attr name="RainView_drop_speed" format="integer"></attr>
-        <attr name="RainView_drop_color" format="color"></attr>
-        <attr name="RainView_drop_number" format="integer"></attr>
-    </declare-styleable>
 </resources>

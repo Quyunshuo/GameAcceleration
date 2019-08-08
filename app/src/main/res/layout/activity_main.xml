@@ -232,7 +232,7 @@
         android:id="@+id/image_fighter"
         android:layout_width="100dp"
         android:layout_height="190dp"
-        android:clickable="true"
+        android:clickable="false"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
