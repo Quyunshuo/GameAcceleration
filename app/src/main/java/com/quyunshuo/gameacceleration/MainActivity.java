@@ -109,19 +109,13 @@ public class MainActivity extends AppCompatActivity {
                                      View view4, View view5, View view6) {
         mExplosionField.explode(view3);
         mExplosionField.explode(view4);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mExplosionField.explode(view2);
-                mExplosionField.explode(view5);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mExplosionField.explode(view1);
-                        mExplosionField.explode(view6);
-                    }
-                }, 600);
-            }
+        new Handler().postDelayed(() -> {
+            mExplosionField.explode(view2);
+            mExplosionField.explode(view5);
+            new Handler().postDelayed(() -> {
+                mExplosionField.explode(view1);
+                mExplosionField.explode(view6);
+            }, 600);
         }, 600);
     }
 
@@ -201,12 +195,7 @@ public class MainActivity extends AppCompatActivity {
                 mImage_bullet1.setVisibility(View.GONE);
                 mImage_bullet2.setVisibility(View.GONE);
                 startExplosionField(mImage_01, mImage_02, mImage_03, mImage_04, mImage_05, mImage_06);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fighterEndAnimation();
-                    }
-                }, 2000);
+                new Handler().postDelayed(() -> fighterEndAnimation(), 2000);
             }
         });
         bullet2YSecond.start();
