@@ -1,6 +1,7 @@
 package com.quyunshuo.gameacceleration;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     ImageView mImage_flash;
     //爆炸特效
     private ExplosionField mExplosionField;
-    static final String TAG = "MiYan";
     //子弹距离第二行图标的距离
     private int mBulletDistanceIcon;
     //飞机距离子弹的距离
@@ -65,27 +65,17 @@ public class MainActivity extends AppCompatActivity {
     private int mFighterHeight;
     //屏幕高度
     private int mParentHeight;
+    //第一列图标距离第二列图标
+    private int mIcon1DistanceIcon2;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         //判断  当启动activity的时候才执行
         if (hasFocus) {
-            mImage_bullet1.setVisibility(View.VISIBLE);
-            mImage_bullet2.setVisibility(View.VISIBLE);
             getControlPositionData();
             fighterAnimation();
         }
-    }
-
-    /**
-     * 获取控件之间的距离
-     */
-    private void getControlPositionData() {
-        mBulletDistanceIcon = mImage_bullet1.getTop() - (mImage_07.getTop() + mImage_07.getMeasuredHeight());
-        mFighterDistanceBullet = mImage_fighter.getTop() - (mImage_bullet1.getTop() - 120);
-        mFighterHeight = mImage_fighter.getMeasuredHeight();
-        mParentHeight = mImage_fighter.getTop();
     }
 
     @Override
@@ -113,106 +103,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 子弹攻击图标 图标消失
-     */
-    private void bulletAnimation() {
-        //子弹透明度变化动画
-        ObjectAnimator bullet1Alpha = ObjectAnimator.ofFloat(mImage_bullet1,
-                "alpha", 0.0f, 1.0f, 1.0f, 1.0f);
-        bullet1Alpha.setDuration(2000);
-        bullet1Alpha.setRepeatCount(1);
-        bullet1Alpha.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-                //调用图标爆炸特效
-                startExplosionField(mImage_07, mImage_08, mImage_09, mImage_10, mImage_11, mImage_12);
-            }
-        });
-        ObjectAnimator bullet2Alpha = ObjectAnimator.ofFloat(mImage_bullet2,
-                "alpha", 0.0f, 1.0f, 1.0f, 1.0f);
-        bullet2Alpha.setDuration(2000);
-        bullet2Alpha.setRepeatCount(1);
-        ObjectAnimator bullet1Y = ObjectAnimator.ofFloat(mImage_bullet1,
-                "translationY", 0, -mBulletDistanceIcon);
-        bullet1Y.setDuration(2000);
-        bullet1Y.setRepeatCount(1);
-        //设置插值器 效果：开始时结束时缓慢，中间加速
-        bullet1Y.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator bullet2Y = ObjectAnimator.ofFloat(mImage_bullet2,
-                "translationY", 0, -mBulletDistanceIcon);
-        bullet2Y.setDuration(2000);
-        bullet2Y.setRepeatCount(1);
-        //设置插值器 效果：开始时结束时缓慢，中间加速
-        bullet2Y.setInterpolator(new AccelerateInterpolator());
-        AnimatorSet bulletAnimatorSet = new AnimatorSet();
-        bulletAnimatorSet.playTogether(bullet1Alpha, bullet2Alpha, bullet1Y, bullet2Y);
-        bulletAnimatorSet.setDuration(2000);
-        //动画监听(结束时)
-        bulletAnimatorSet.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                //隐藏子弹
-                mImage_bullet1.setVisibility(View.GONE);
-                mImage_bullet2.setVisibility(View.GONE);
-                startExplosionField(mImage_01, mImage_02, mImage_03, mImage_04, mImage_05, mImage_06);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fighterEndAnimation();
-                    }
-                }, 2400);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
-
-        bulletAnimatorSet.start();
-    }
-
-    /**
      * 爆炸特效
      */
     private void startExplosionField(View view1, View view2, View view3,
                                      View view4, View view5, View view6) {
-        mExplosionField.explode(view2);
         mExplosionField.explode(view3);
         mExplosionField.explode(view4);
-        mExplosionField.explode(view5);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mExplosionField.explode(view1);
-                mExplosionField.explode(view6);
+                mExplosionField.explode(view2);
+                mExplosionField.explode(view5);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mExplosionField.explode(view1);
+                        mExplosionField.explode(view6);
+                    }
+                }, 600);
             }
-        }, 1200);
+        }, 600);
     }
 
     /**
@@ -223,30 +133,85 @@ public class MainActivity extends AppCompatActivity {
                 "translationY", 0, -mFighterDistanceBullet);
         fighterStart.setDuration(2000);
         fighterStart.setInterpolator(new AccelerateDecelerateInterpolator());
-        fighterStart.addListener(new Animator.AnimatorListener() {
+        fighterStart.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
+            public void onAnimationEnd(Animator animation) {
                 //进场动画结束时开始子弹攻击图标的AnimatorSet
                 bulletAnimation();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
             }
         });
         fighterStart.start();
     }
+
+    /**
+     * 第一次子弹攻击图标 图标消失
+     */
+    private void bulletAnimation() {
+        //子弹透明度变化动画
+        ObjectAnimator bullet1Alpha = ObjectAnimator.ofFloat(mImage_bullet1,
+                "alpha", 0.0f, 1.0f, 1.0f, 1.0f);
+        bullet1Alpha.setDuration(1500);
+        bullet1Alpha.setRepeatCount(1);
+        ObjectAnimator bullet2Alpha = ObjectAnimator.ofFloat(mImage_bullet2,
+                "alpha", 0.0f, 1.0f, 1.0f, 1.0f);
+        bullet2Alpha.setDuration(1500);
+        bullet2Alpha.setRepeatCount(1);
+        ObjectAnimator bullet1Y = ObjectAnimator.ofFloat(mImage_bullet1,
+                "translationY", 0, -mBulletDistanceIcon);
+        bullet1Y.setDuration(1500);
+        //设置插值器 效果：开始时结束时缓慢，中间加速
+        bullet1Y.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator bullet2Y = ObjectAnimator.ofFloat(mImage_bullet2,
+                "translationY", 0, -mBulletDistanceIcon);
+        bullet2Y.setDuration(1500);
+        //设置插值器 效果：开始时结束时缓慢，中间加速
+        bullet2Y.setInterpolator(new AccelerateInterpolator());
+        bullet2Y.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //调用图标爆炸特效
+                startExplosionField(mImage_07, mImage_08, mImage_09, mImage_10, mImage_11, mImage_12);
+                bulletSecondAnimation();
+            }
+        });
+        AnimatorSet bulletAnimatorSet = new AnimatorSet();
+        bulletAnimatorSet.playTogether(bullet1Alpha, bullet2Alpha, bullet1Y, bullet2Y);
+        bulletAnimatorSet.setDuration(1500);
+        bulletAnimatorSet.start();
+    }
+
+    /**
+     * 子弹第二次攻击
+     */
+    private void bulletSecondAnimation() {
+        ObjectAnimator bullet1YSecond = ObjectAnimator.ofFloat(mImage_bullet1, "translationY",
+                0, -(mBulletDistanceIcon + mIcon1DistanceIcon2));
+        bullet1YSecond.setDuration(1500);
+        bullet1YSecond.setInterpolator(new AccelerateInterpolator());
+        bullet1YSecond.start();
+        ObjectAnimator bullet2YSecond = ObjectAnimator.ofFloat(mImage_bullet2, "translationY",
+                0, -(mBulletDistanceIcon + mIcon1DistanceIcon2));
+        bullet2YSecond.setDuration(1500);
+        bullet2YSecond.setInterpolator(new AccelerateInterpolator());
+        bullet2YSecond.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                //隐藏子弹
+                mImage_bullet1.setVisibility(View.GONE);
+                mImage_bullet2.setVisibility(View.GONE);
+                startExplosionField(mImage_01, mImage_02, mImage_03, mImage_04, mImage_05, mImage_06);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        fighterEndAnimation();
+                    }
+                }, 2000);
+            }
+        });
+        bullet2YSecond.start();
+    }
+
 
     /**
      * 飞机退出动画
@@ -259,31 +224,27 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator fighterEndFighter = ObjectAnimator.ofFloat(mImage_fighter,
                 "translationY", -mFighterDistanceBullet,
                 -(mParentHeight + mFighterHeight));
-        fighterEndFighter.setDuration(2000);
+        fighterEndFighter.setDuration(1500);
         fighterEndFighter.setInterpolator(new AccelerateInterpolator());
         AnimatorSet endAnimationSet = new AnimatorSet();
         endAnimationSet.playTogether(fighterEndFlash, fighterEndFighter);
-        endAnimationSet.addListener(new Animator.AnimatorListener() {
+        endAnimationSet.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
+            public void onAnimationEnd(Animator animation) {
                 mImage_flash.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
             }
         });
         endAnimationSet.start();
+    }
+
+    /**
+     * 获取控件之间的距离
+     */
+    private void getControlPositionData() {
+        mBulletDistanceIcon = mImage_bullet1.getTop() - (mImage_07.getTop() + mImage_07.getMeasuredHeight());
+        mFighterDistanceBullet = mImage_fighter.getTop() - (mImage_bullet1.getTop() - 120);
+        mFighterHeight = mImage_fighter.getMeasuredHeight();
+        mParentHeight = mImage_fighter.getTop();
+        mIcon1DistanceIcon2 = mImage_07.getTop() - mImage_01.getTop();
     }
 }
