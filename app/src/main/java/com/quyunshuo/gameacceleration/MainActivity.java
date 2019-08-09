@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.quyunshuo.gameacceleration.explosion.ExplosionField;
+import com.quyunshuo.gameacceleration.util.StatusBarUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,14 +68,16 @@ public class MainActivity extends AppCompatActivity {
     private int mParentHeight;
     //第一列图标距离第二列图标
     private int mIcon1DistanceIcon2;
+    //是否进行动画
+    private boolean mIsAnimate = true;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         //判断  当启动activity的时候才执行
         if (hasFocus) {
-            getControlPositionData();
-            fighterAnimation();
+                getControlPositionData();
+                fighterAnimation();
         }
     }
 
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.bg));
         //初始化ButterKnife
         ButterKnife.bind(this);
         initView();
@@ -236,4 +240,5 @@ public class MainActivity extends AppCompatActivity {
         mParentHeight = mImage_fighter.getTop();
         mIcon1DistanceIcon2 = mImage_07.getTop() - mImage_01.getTop();
     }
+
 }
