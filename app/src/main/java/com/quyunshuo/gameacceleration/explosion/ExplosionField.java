@@ -1,4 +1,4 @@
-package com.quyunshuo.gameacceleration;
+package com.quyunshuo.gameacceleration.explosion;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

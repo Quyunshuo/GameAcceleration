@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package com.quyunshuo.gameacceleration;
+ package com.quyunshuo.gameacceleration.explosion;
 
 import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
