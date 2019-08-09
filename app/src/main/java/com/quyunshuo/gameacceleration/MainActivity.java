@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
         //判断  当启动activity的时候才执行
         if (hasFocus) {
+            mImage_bullet1.setVisibility(View.VISIBLE);
+            mImage_bullet2.setVisibility(View.VISIBLE);
             getControlPositionData();
             fighterAnimation();
         }
@@ -150,13 +152,13 @@ public class MainActivity extends AppCompatActivity {
         bullet1Y.setDuration(2000);
         bullet1Y.setRepeatCount(1);
         //设置插值器 效果：开始时结束时缓慢，中间加速
-        bullet1Y.setInterpolator(new AccelerateDecelerateInterpolator());
+        bullet1Y.setInterpolator(new AccelerateInterpolator());
         ObjectAnimator bullet2Y = ObjectAnimator.ofFloat(mImage_bullet2,
                 "translationY", 0, -mBulletDistanceIcon);
         bullet2Y.setDuration(2000);
         bullet2Y.setRepeatCount(1);
         //设置插值器 效果：开始时结束时缓慢，中间加速
-        bullet2Y.setInterpolator(new AccelerateDecelerateInterpolator());
+        bullet2Y.setInterpolator(new AccelerateInterpolator());
         AnimatorSet bulletAnimatorSet = new AnimatorSet();
         bulletAnimatorSet.playTogether(bullet1Alpha, bullet2Alpha, bullet1Y, bullet2Y);
         bulletAnimatorSet.setDuration(2000);
@@ -229,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                //进场动画end时start子弹攻击图标的AnimatorSet
+                //进场动画结束时开始子弹攻击图标的AnimatorSet
                 bulletAnimation();
             }
 
@@ -252,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
     private void fighterEndAnimation() {
         mImage_flash.setVisibility(View.VISIBLE);
         ObjectAnimator fighterEndFlash = ObjectAnimator.ofFloat(mImage_flash,
-                "translationY", 0, 3000);
+                "translationY", 0, 4000);
         fighterEndFlash.setDuration(1500);
         ObjectAnimator fighterEndFighter = ObjectAnimator.ofFloat(mImage_fighter,
                 "translationY", -mFighterDistanceBullet,
